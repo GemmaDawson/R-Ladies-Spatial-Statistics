@@ -1,0 +1,189 @@
+---
+title: "Spatial Statistics - Notes"
+author: "Gemma Dawson"
+date: "28 May 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R-Ladies (Johannesburg)
+
+The incredible Dr Inger Fabris-Rotelli 
+
+### Introduction
+
+"How much is where" instead of "How much"
+
+The key element to the analysis is the *autocorrelation* of the observations in space.
+
+*Autocorrelation*: correlation between elements of data separate by a given interval of space/time.
+
+*Correlation*: interdependance of variable quantities
+
+#### Tobler's First Law of Geography
+> Everyting is related to everyting else, but near things are more related than distant things.
+
+### Spatial Analysis
+1. What are the parametrs of a mdel generating data?
+2. Is the mean different in different spatial regions?
+3. Can we estimate a variable at an unobserved location?
+
+###Geostatistical
+Data measured only at certain locations - cannot be sampled exhaustively.  
+Example: predicting temperature given data from weather station
+
+```{r, warning=F, message=F}
+library(spatstat)
+
+a <- as.ppp(longleaf)
+a <- as.data.frame(a)
+head(a)
+plot(a)
+
+
+aa <- as.ppp(chorley)
+aa
+plot(aa)
+```
+
+### Lattice Data or Regional
+Spatially aggregated data and is usually exhaustively observed.
+Examples
+1. data collected at the ward level
+2. remotely sensed data reported at the pixel level
+
+Use the term *sites* instead of *points* to refer to the location of lattice data.  Usually a polygno (ward boundary)  with some representative location as the centroid.
+
+#### Measures on Lattices
+How is distance between "representative points" determined?  Associate a weight for sites considered spatially connected.
+
+### Point Patterns
+A point pattern is a collection of points.  These are effectively unmarked spatial data.  Are these points random or is there a spatial correlation?
+
+```{r warning=F, message=F}
+murchison
+mpp <- as.ppp(murchison$gold)
+mpp
+plot(mpp)
+```
+Is the rectangle domain correct?  If you are looking at hte density, then maybe not?  If the rectangle contains measured data, then yes.  But if the empty represented area that was not measured, then no.
+
+```{r warning=F, message=F}
+# plot()
+```
+
+```{r warning=F, message=F}
+# mppw <- as.ppp(murchison$greenstone)
+# mppw
+# plot(mppw)
+```
+
+### Autocorrelation
+What is the degree to which data are autocorrelated?
+
+
+### Moran's I
+Those around it are more similar than not
+
+
+```{r warning=F, message=F}
+library(raster)
+
+r <- raster(nrows=10, ncols=10)
+r[] <- 1:ncell(r)
+image(r)
+Moran(r)
+
+m <- MoranLocal(r)
+plot(m)
+com <- -1/99
+com
+# Rook's Case
+f <- matrix(c(0,1,0,1,0,1,0,1,0), nrow=3)
+Moran(r, f)
+```
+
+
+### Geary's C
+If C > 1, the locations are connected to locations with dissimilat values and vice versa for C < 1.
+The constant mean and variance are important as if this is not true, the similarity/dissimilarity is more likely due to the heterogeneous mena and variance.
+```{r warning=F, message=F}
+library(raster)
+
+r <- raster(nrows=10, ncols=10)
+r[] <- 1:ncell(r)
+image(r)
+Geary(r)
+
+m <- GearyLocal(r)
+plot(m)
+com <- -1/99
+com
+# Rook's Case
+f <- matrix(c(0,1,0,1,0,1,0,1,0), nrow=3)
+Geary(r, f)
+```
+
+
+### The Variogram/Semi-variogram
+Thanks to Matheron (1963)
+Need at least 30 pairs oflocation should be available at each h
+
+```{r warning=F, message=F}
+library(sp)
+
+library(gstat)
+
+data(meuse)
+plot(meuse$x, meuse$y)
+
+coordinates(meuse) = ~x+y
+
+# vv1 <- log(zinc)
+
+
+
+vv3 <- variogram(log(zinc)~x+y, meuse, alpha=c(0,45,90,135))
+plot(vv3)
+```
+
+
+
+```{r warning=F, message=F}
+den <-  density(murchison$gold)
+plot(den)
+```
+
+
+Be sure to look at the range before interpretting a density plot.
+
+
+
+
+
+```{r warning=F, message=F}
+den <-  density(murchison$gold, bw.diggle)
+plot(den)
+```
+
+
+```{r warning=F, message=F}
+den <-  density(murchison$gold, bw.frac)
+plot(den)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
