@@ -175,6 +175,16 @@ den <-  density(murchison$gold, bw.frac)
 plot(den)
 ```
 
+### GIS & Spatial Statistics
+https:..mgimond.github.io/Spatial/index.html
+
+A Geographic Information System (GIS) is multi-component envirnment used to create, manage, visualise, and analyse data and its spatial counterpart.
+
+In the context of mainstream GIS software, the term analysis refers to data maniputlatio and data querying.
+
+In the context of spatial analysis, the aanalysis focused on the statistical analysis of patterns nd underlying processes or more generally, spatial analysis addresses the question "what could have been the genisis..."
+
+
 
 
 
